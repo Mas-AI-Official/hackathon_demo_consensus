@@ -1,0 +1,1289 @@
+{
+  "run_id": "run_807092eb5020",
+  "updated_at": "2026-02-11T04:08:21.561789",
+  "count": 61,
+  "events": [
+    {
+      "event_id": "evt_884037d3c542",
+      "run_id": "run_807092eb5020",
+      "pulse_id": null,
+      "ts": "2026-02-11T04:07:33.957712",
+      "type": "run_started",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "One-click run started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": true,
+        "pulses_requested": 11,
+        "run_llm_briefing": true
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_fd81ba7c23a6",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_1",
+      "ts": "2026-02-11T04:07:33.971735",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 1 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 1
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_a7259441f4d8",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_1",
+      "ts": "2026-02-11T04:07:33.987259",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.orchestrator",
+      "title": "Dispatching task: Finalize enterprise-grade frontend/backend sync",
+      "payload": {
+        "task_id": "hk_consensus_2026_architecture_sync",
+        "task_title": "Finalize enterprise-grade frontend/backend sync",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_2f20350593b7",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_1",
+      "ts": "2026-02-11T04:07:33.988263",
+      "type": "agent_message",
+      "from": "agent.orchestrator",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Finalize enterprise-grade frontend/backend sync` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "hk_consensus_2026_architecture_sync",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_a7259441f4d8",
+      "severity": null
+    },
+    {
+      "event_id": "evt_a370c2b1ff27",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_1",
+      "ts": "2026-02-11T04:07:33.989259",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "hk_consensus_2026_architecture_sync"
+      },
+      "parent_event_id": "evt_2f20350593b7",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_997cf778ccff",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_1",
+      "ts": "2026-02-11T04:07:33.990267",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "hk_consensus_2026_architecture_sync",
+        "timestamp": "2026-02-11T04:07:33.986264"
+      },
+      "parent_event_id": "evt_a370c2b1ff27",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_8b6d89e4c513",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_2",
+      "ts": "2026-02-11T04:07:33.991261",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 2 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 2
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_e47d4a69fdd2",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_2",
+      "ts": "2026-02-11T04:07:34.004844",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.governance",
+      "title": "Dispatching task: Demonstrate governance and audit trace",
+      "payload": {
+        "task_id": "hk_consensus_2026_governance_audit",
+        "task_title": "Demonstrate governance and audit trace",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_88b1f1038c6a",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_2",
+      "ts": "2026-02-11T04:07:34.006856",
+      "type": "agent_message",
+      "from": "agent.governance",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Demonstrate governance and audit trace` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "hk_consensus_2026_governance_audit",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_e47d4a69fdd2",
+      "severity": null
+    },
+    {
+      "event_id": "evt_cb5f5c52a4c0",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_2",
+      "ts": "2026-02-11T04:07:34.007851",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "hk_consensus_2026_governance_audit"
+      },
+      "parent_event_id": "evt_88b1f1038c6a",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_9d7ae83dd712",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_2",
+      "ts": "2026-02-11T04:07:34.007851",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "hk_consensus_2026_governance_audit",
+        "timestamp": "2026-02-11T04:07:34.003338"
+      },
+      "parent_event_id": "evt_cb5f5c52a4c0",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_fe23be9bac68",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_3",
+      "ts": "2026-02-11T04:07:34.011355",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 3 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 3
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_51e3e6d24012",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_3",
+      "ts": "2026-02-11T04:07:34.028813",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.orchestrator",
+      "title": "Dispatching task: Run autonomous company workflow demo",
+      "payload": {
+        "task_id": "hk_consensus_2026_agentic_company_demo",
+        "task_title": "Run autonomous company workflow demo",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_5d940eea8ab3",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_3",
+      "ts": "2026-02-11T04:07:34.029815",
+      "type": "agent_message",
+      "from": "agent.orchestrator",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Run autonomous company workflow demo` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "hk_consensus_2026_agentic_company_demo",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_51e3e6d24012",
+      "severity": null
+    },
+    {
+      "event_id": "evt_a20ed78ed295",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_3",
+      "ts": "2026-02-11T04:07:34.029815",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "hk_consensus_2026_agentic_company_demo"
+      },
+      "parent_event_id": "evt_5d940eea8ab3",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_364d01d3ddfa",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_3",
+      "ts": "2026-02-11T04:07:34.031318",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "hk_consensus_2026_agentic_company_demo",
+        "timestamp": "2026-02-11T04:07:34.027810"
+      },
+      "parent_event_id": "evt_a20ed78ed295",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_99e89e7423b4",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_4",
+      "ts": "2026-02-11T04:07:34.032324",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 4 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 4
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_546c162868c6",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_4",
+      "ts": "2026-02-11T04:07:34.044832",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.vision",
+      "title": "Dispatching task: Enable DaenaVision input pipeline",
+      "payload": {
+        "task_id": "hk_consensus_2026_daena_vision_stream",
+        "task_title": "Enable DaenaVision input pipeline",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_1ac7e51d9fdc",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_4",
+      "ts": "2026-02-11T04:07:34.045830",
+      "type": "agent_message",
+      "from": "agent.vision",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Enable DaenaVision input pipeline` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "hk_consensus_2026_daena_vision_stream",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_546c162868c6",
+      "severity": null
+    },
+    {
+      "event_id": "evt_67a92e58d92f",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_4",
+      "ts": "2026-02-11T04:07:34.046836",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "hk_consensus_2026_daena_vision_stream"
+      },
+      "parent_event_id": "evt_1ac7e51d9fdc",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_0cd68b03e965",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_4",
+      "ts": "2026-02-11T04:07:34.047837",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "hk_consensus_2026_daena_vision_stream",
+        "timestamp": "2026-02-11T04:07:34.043839"
+      },
+      "parent_event_id": "evt_67a92e58d92f",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_ac97ce9c742e",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_5",
+      "ts": "2026-02-11T04:07:34.048829",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 5 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 5
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_a459a7caab86",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_5",
+      "ts": "2026-02-11T04:07:34.063368",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.integration",
+      "title": "Dispatching task: Validate MCP and integration connector health",
+      "payload": {
+        "task_id": "hk_consensus_2026_mcp_connectors",
+        "task_title": "Validate MCP and integration connector health",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_9192647c02b1",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_5",
+      "ts": "2026-02-11T04:07:34.065371",
+      "type": "agent_message",
+      "from": "agent.integration",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Validate MCP and integration connector health` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "hk_consensus_2026_mcp_connectors",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_a459a7caab86",
+      "severity": null
+    },
+    {
+      "event_id": "evt_29895e012d2d",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_5",
+      "ts": "2026-02-11T04:07:34.066372",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "hk_consensus_2026_mcp_connectors"
+      },
+      "parent_event_id": "evt_9192647c02b1",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_3ac3b66ac50b",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_5",
+      "ts": "2026-02-11T04:07:34.068374",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "hk_consensus_2026_mcp_connectors",
+        "timestamp": "2026-02-11T04:07:34.063368"
+      },
+      "parent_event_id": "evt_29895e012d2d",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_4be806234c04",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_6",
+      "ts": "2026-02-11T04:07:34.069371",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 6 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 6
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_4f6fc0553616",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_6",
+      "ts": "2026-02-11T04:07:34.082678",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.strategy",
+      "title": "Dispatching task: Prepare investor-facing founder control narrative",
+      "payload": {
+        "task_id": "hk_consensus_2026_pitch_mode",
+        "task_title": "Prepare investor-facing founder control narrative",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_df0cde3a670e",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_6",
+      "ts": "2026-02-11T04:07:34.084685",
+      "type": "agent_message",
+      "from": "agent.strategy",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Prepare investor-facing founder control narrative` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "hk_consensus_2026_pitch_mode",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_4f6fc0553616",
+      "severity": null
+    },
+    {
+      "event_id": "evt_d290ebdda15b",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_6",
+      "ts": "2026-02-11T04:07:34.085683",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "hk_consensus_2026_pitch_mode"
+      },
+      "parent_event_id": "evt_df0cde3a670e",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_2fbc2d9ed4e4",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_6",
+      "ts": "2026-02-11T04:07:34.086691",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "hk_consensus_2026_pitch_mode",
+        "timestamp": "2026-02-11T04:07:34.081132"
+      },
+      "parent_event_id": "evt_d290ebdda15b",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_6d61fc838a21",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_7",
+      "ts": "2026-02-11T04:07:34.087684",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 7 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 7
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_328e6964be44",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_7",
+      "ts": "2026-02-11T04:07:34.104236",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.shadow",
+      "title": "Dispatching task: Run QA regression and resilience checks",
+      "payload": {
+        "task_id": "hk_consensus_2026_qa_gate",
+        "task_title": "Run QA regression and resilience checks",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_956423eabe39",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_7",
+      "ts": "2026-02-11T04:07:34.106240",
+      "type": "agent_message",
+      "from": "agent.shadow",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Run QA regression and resilience checks` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "hk_consensus_2026_qa_gate",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_328e6964be44",
+      "severity": null
+    },
+    {
+      "event_id": "evt_06dd43f37034",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_7",
+      "ts": "2026-02-11T04:07:34.108237",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "hk_consensus_2026_qa_gate"
+      },
+      "parent_event_id": "evt_956423eabe39",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_9effc7c797ab",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_7",
+      "ts": "2026-02-11T04:07:34.110237",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "hk_consensus_2026_qa_gate",
+        "timestamp": "2026-02-11T04:07:34.102225"
+      },
+      "parent_event_id": "evt_06dd43f37034",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_9076443acd1f",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_8",
+      "ts": "2026-02-11T04:07:34.111235",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 8 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 8
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_24557af2a200",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_8",
+      "ts": "2026-02-11T04:07:34.126267",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.orchestrator",
+      "title": "Dispatching task: Rehearse full live demo sequence",
+      "payload": {
+        "task_id": "hk_consensus_2026_live_rehearsal",
+        "task_title": "Rehearse full live demo sequence",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_72d473f72878",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_8",
+      "ts": "2026-02-11T04:07:34.127269",
+      "type": "agent_message",
+      "from": "agent.orchestrator",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Rehearse full live demo sequence` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "hk_consensus_2026_live_rehearsal",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_24557af2a200",
+      "severity": null
+    },
+    {
+      "event_id": "evt_a2f69bf72473",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_8",
+      "ts": "2026-02-11T04:07:34.129271",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "hk_consensus_2026_live_rehearsal"
+      },
+      "parent_event_id": "evt_72d473f72878",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_e03ed6b021a9",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_8",
+      "ts": "2026-02-11T04:07:34.131269",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "hk_consensus_2026_live_rehearsal",
+        "timestamp": "2026-02-11T04:07:34.125274"
+      },
+      "parent_event_id": "evt_a2f69bf72473",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_30a736881a76",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_9",
+      "ts": "2026-02-11T04:07:34.133265",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 9 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 9
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_304dffca70de",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_9",
+      "ts": "2026-02-11T04:07:34.151688",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.orchestrator",
+      "title": "Dispatching task: Wiring and auth stability",
+      "payload": {
+        "task_id": "milestone_proj_hk_consensus_2026_m1",
+        "task_title": "Wiring and auth stability",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_4da0e7fab382",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_9",
+      "ts": "2026-02-11T04:07:34.153694",
+      "type": "agent_message",
+      "from": "agent.orchestrator",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Wiring and auth stability` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "milestone_proj_hk_consensus_2026_m1",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_304dffca70de",
+      "severity": null
+    },
+    {
+      "event_id": "evt_a576a507bdda",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_9",
+      "ts": "2026-02-11T04:07:34.155702",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "milestone_proj_hk_consensus_2026_m1"
+      },
+      "parent_event_id": "evt_4da0e7fab382",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_98594edcf5c1",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_9",
+      "ts": "2026-02-11T04:07:34.157701",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "milestone_proj_hk_consensus_2026_m1",
+        "timestamp": "2026-02-11T04:07:34.150183"
+      },
+      "parent_event_id": "evt_a576a507bdda",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_83c2cb10b3e7",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_10",
+      "ts": "2026-02-11T04:07:34.158698",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 10 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 10
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_681b703f293f",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_10",
+      "ts": "2026-02-11T04:07:34.175239",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.orchestrator",
+      "title": "Dispatching task: Governed autonomy demo",
+      "payload": {
+        "task_id": "milestone_proj_hk_consensus_2026_m2",
+        "task_title": "Governed autonomy demo",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_244ad88b5c86",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_10",
+      "ts": "2026-02-11T04:07:34.178237",
+      "type": "agent_message",
+      "from": "agent.orchestrator",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `Governed autonomy demo` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "milestone_proj_hk_consensus_2026_m2",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_681b703f293f",
+      "severity": null
+    },
+    {
+      "event_id": "evt_23f3712f82fe",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_10",
+      "ts": "2026-02-11T04:07:34.179241",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "milestone_proj_hk_consensus_2026_m2"
+      },
+      "parent_event_id": "evt_244ad88b5c86",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_16427557eccc",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_10",
+      "ts": "2026-02-11T04:07:34.181746",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "milestone_proj_hk_consensus_2026_m2",
+        "timestamp": "2026-02-11T04:07:34.174242"
+      },
+      "parent_event_id": "evt_23f3712f82fe",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_4e22aba1952b",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_11",
+      "ts": "2026-02-11T04:07:34.182747",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 11 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 11
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_2adb1291988d",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_11",
+      "ts": "2026-02-11T04:07:34.198770",
+      "type": "agent_call",
+      "from": "workflow.orchestrator",
+      "to": "agent.orchestrator",
+      "title": "Dispatching task: HK hackathon pitch-ready run",
+      "payload": {
+        "task_id": "milestone_proj_hk_consensus_2026_m3",
+        "task_title": "HK hackathon pitch-ready run",
+        "workflow_id": "hk_consensus_2026"
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_c13843896d1a",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_11",
+      "ts": "2026-02-11T04:07:34.201273",
+      "type": "agent_message",
+      "from": "agent.orchestrator",
+      "to": "governance.council",
+      "title": "Agent submitted execution rationale",
+      "payload": {
+        "message": "Task `HK hackathon pitch-ready run` progressed safely. Requesting governance vote for continued autonomous execution.",
+        "task_id": "milestone_proj_hk_consensus_2026_m3",
+        "confidence": 0.84
+      },
+      "parent_event_id": "evt_2adb1291988d",
+      "severity": null
+    },
+    {
+      "event_id": "evt_c4b64f12d681",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_11",
+      "ts": "2026-02-11T04:07:34.203282",
+      "type": "governance_vote",
+      "from": "governance.council",
+      "to": "policy.center",
+      "title": "Governance council vote completed",
+      "payload": {
+        "votes": [
+          {
+            "member": "risk_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "compliance_guard",
+            "vote": "approve"
+          },
+          {
+            "member": "ops_guard",
+            "vote": "approve"
+          }
+        ],
+        "result": "approved",
+        "task_id": "milestone_proj_hk_consensus_2026_m3"
+      },
+      "parent_event_id": "evt_c13843896d1a",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_c8c323d77107",
+      "run_id": "run_807092eb5020",
+      "pulse_id": "pulse_11",
+      "ts": "2026-02-11T04:07:34.205281",
+      "type": "decision_finalized",
+      "from": "policy.center",
+      "to": "workflow.executor",
+      "title": "Final decision: continue execution",
+      "payload": {
+        "decision": "approved",
+        "rationale": "All council members approved based on low operational risk and policy compliance.",
+        "task_id": "milestone_proj_hk_consensus_2026_m3",
+        "timestamp": "2026-02-11T04:07:34.198770"
+      },
+      "parent_event_id": "evt_c4b64f12d681",
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_bec8059788e2",
+      "run_id": "run_807092eb5020",
+      "pulse_id": null,
+      "ts": "2026-02-11T04:07:36.506965",
+      "type": "agent_message",
+      "from": "agent.founder_briefing",
+      "to": "founder.panel",
+      "title": "LLM founder briefing generated",
+      "payload": {
+        "message": "Cloud provider 'openai' failed (Connection error.), and local Ollama execution is currently unavailable.\nTo restore full brain responses:\n1. Run `scripts\\START_OLLAMA.bat`\n2. Pull/load a model (example: `ollama pull qwen2.5:14b-instruct`)\n3. Verify with `ollama list` and retry."
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_8753b71e1441",
+      "run_id": "run_807092eb5020",
+      "pulse_id": null,
+      "ts": "2026-02-11T04:07:36.515468",
+      "type": "decision_finalized",
+      "from": "governance.council",
+      "to": "workflow.executor",
+      "title": "One-click run finalized",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "progressed_task_ids": [
+          "hk_consensus_2026_architecture_sync",
+          "hk_consensus_2026_governance_audit",
+          "hk_consensus_2026_agentic_company_demo",
+          "hk_consensus_2026_daena_vision_stream",
+          "hk_consensus_2026_mcp_connectors",
+          "hk_consensus_2026_pitch_mode",
+          "hk_consensus_2026_qa_gate",
+          "hk_consensus_2026_live_rehearsal",
+          "milestone_proj_hk_consensus_2026_m1",
+          "milestone_proj_hk_consensus_2026_m2",
+          "milestone_proj_hk_consensus_2026_m3"
+        ],
+        "decision": "approved",
+        "rationale": "Workflow completed with governance-approved pulses and synchronized task progression.",
+        "status_snapshot": {
+          "workflow_id": "hk_consensus_2026",
+          "status": "completed",
+          "event_name": "EasyA Consensus Hackathon - Hong Kong",
+          "event_dates": {
+            "start": "2026-02-10",
+            "end": "2026-02-12"
+          },
+          "project": {
+            "id": "proj_hk_consensus_2026",
+            "name": "HK Consensus 2026 - Daena Enterprise Demo",
+            "status": "active"
+          },
+          "activation": {
+            "activated_at": "2026-02-11T04:07:34.195767",
+            "last_demo_run_at": "2026-02-11T04:07:34.198770"
+          },
+          "task_summary": {
+            "total": 11,
+            "pending": 0,
+            "running": 0,
+            "paused": 0,
+            "completed": 11,
+            "failed": 0,
+            "progress": 100.0
+          },
+          "execution_summary": {
+            "total": 8,
+            "pending": 0,
+            "running": 0,
+            "paused": 0,
+            "completed": 8,
+            "failed": 0,
+            "progress": 100.0
+          },
+          "milestone_summary": {
+            "total": 3,
+            "pending": 0,
+            "running": 0,
+            "paused": 0,
+            "completed": 3,
+            "failed": 0,
+            "progress": 100.0
+          },
+          "next_task": {
+            "task_id": null,
+            "title": null,
+            "status": null,
+            "progress": null
+          },
+          "updated_at": "2026-02-11T04:07:34.215793"
+        }
+      },
+      "parent_event_id": null,
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_97f3ec02edb1",
+      "run_id": "run_807092eb5020",
+      "pulse_id": null,
+      "ts": "2026-02-11T04:08:19.263640",
+      "type": "tool_call",
+      "from": "agent.security",
+      "to": "tool.slither",
+      "title": "Starting DeFi smart contract scan",
+      "payload": {
+        "scan_id": "9c2ba652443a",
+        "is_inline_code": false,
+        "contract_path": "contracts/DemoVault.sol"
+      },
+      "parent_event_id": null,
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_79a3e7e7dee9",
+      "run_id": "run_807092eb5020",
+      "pulse_id": null,
+      "ts": "2026-02-11T04:08:21.560285",
+      "type": "tool_result",
+      "from": "tool.slither",
+      "to": "agent.security",
+      "title": "DeFi scan completed (6 findings)",
+      "payload": {
+        "scan_id": "9c2ba652443a",
+        "summary": {
+          "total_findings": 6,
+          "high": 2,
+          "medium": 0,
+          "low": 2,
+          "informational": 2,
+          "risk_level": "CRITICAL"
+        },
+        "findings_preview": [
+          {
+            "id": "8312bd5c4a5d3cbed4521d071a0c0e0432e7ed88b8b473b62facec4e355f09be",
+            "title": "arbitrary-send-eth",
+            "severity": "High"
+          },
+          {
+            "id": "be042eb3cf12f2e0ea40e21df720b61b9b01021ebc22178f258f8fd0f33411d0",
+            "title": "reentrancy-eth",
+            "severity": "High"
+          },
+          {
+            "id": "178ba471274d3d0d14c4ca76c9d69e25fc8ec8473eebec815389b4143ad411d7",
+            "title": "missing-zero-check",
+            "severity": "Low"
+          },
+          {
+            "id": "a957ac389affc36bc489b83db03dde3842ee3d96019cefc71c19fd673a122d0a",
+            "title": "reentrancy-events",
+            "severity": "Low"
+          },
+          {
+            "id": "dc24e905924335f5819e0c242475c5f645eda890dd7d81ee3f6a56d79511bca0",
+            "title": "solc-version",
+            "severity": "Informational"
+          },
+          {
+            "id": "215e467f80f4dc570c917d07ef039a8045b029e958bf628b38bb06a856652b69",
+            "title": "low-level-calls",
+            "severity": "Informational"
+          }
+        ]
+      },
+      "parent_event_id": null,
+      "severity": "medium"
+    },
+    {
+      "event_id": "evt_c561ad0901ff",
+      "run_id": "run_807092eb5020",
+      "pulse_id": null,
+      "ts": "2026-02-11T04:08:21.561789",
+      "type": "scan_findings",
+      "from": "agent.security",
+      "to": "governance.council",
+      "title": "Security findings submitted for governance review",
+      "payload": {
+        "scan_id": "9c2ba652443a",
+        "findings_count": 6,
+        "risk_level": "CRITICAL"
+      },
+      "parent_event_id": null,
+      "severity": "medium"
+    }
+  ]
+}

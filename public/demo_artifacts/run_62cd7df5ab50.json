@@ -1,0 +1,43 @@
+{
+  "run_id": "run_62cd7df5ab50",
+  "updated_at": "2026-02-10T21:36:17.454389",
+  "count": 2,
+  "events": [
+    {
+      "event_id": "evt_ae26505eba06",
+      "run_id": "run_62cd7df5ab50",
+      "pulse_id": null,
+      "ts": "2026-02-10T21:36:16.531914",
+      "type": "workflow_reset",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "Workflow reset to baseline",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "project_id": "proj_hk_consensus_2026",
+        "reset_by": "founder"
+      },
+      "parent_event_id": null,
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_de5663aa2925",
+      "run_id": "run_62cd7df5ab50",
+      "pulse_id": null,
+      "ts": "2026-02-10T21:36:17.454389",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    }
+  ]
+}

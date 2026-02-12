@@ -53,6 +53,8 @@ export function HKDemoStudio() {
     const [logs, setLogs] = useState<string[]>([]);
     const [allDemoEvents, setAllDemoEvents] = useState<WorkflowTraceEvent[]>([]);
     const [pulseIndex, setPulseIndex] = useState(0);
+    const [availableRuns, setAvailableRuns] = useState<string[]>([]);
+    const [selectedRun, setSelectedRun] = useState('run_events.json');
 
     const appendLog = useCallback((line: string) => {
         const stamp = new Date().toLocaleTimeString();
@@ -61,19 +63,36 @@ export function HKDemoStudio() {
 
     // 1. Load Replay Artifacts
     useEffect(() => {
+        const loadRuns = async () => {
+            try {
+                const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+                const res = await fetch(`${cleanBase}demo_artifacts/manifest.json`);
+                if (res.ok) {
+                    const runs = await res.json();
+                    setAvailableRuns(runs);
+                }
+            } catch (e) { console.error('Manifest fail', e); }
+        };
+        loadRuns();
+    }, [baseUrl]);
+
+    useEffect(() => {
         const loadArtifacts = async () => {
             try {
                 // Ensure base path ends with slash if not empty
                 const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-                const jsonPath = `${cleanBase}demo_artifacts/run_events.json`;
+                const jsonPath = `${cleanBase}demo_artifacts/${selectedRun}`;
 
                 appendLog(`Attempting to load trace from: ${jsonPath}`);
+                setEvents([]);
+                setPulseIndex(0);
+                setBusy(false);
 
                 const resEvents = await fetch(jsonPath);
                 if (resEvents.ok) {
                     const data = await resEvents.json();
                     setAllDemoEvents(Array.isArray(data) ? data : (data.events || []));
-                    appendLog('Strategy trace artifacts loaded.');
+                    appendLog(`Trace artifacts [${selectedRun}] loaded into memory.`);
                 } else {
                     appendLog(`Failed to load trace: ${resEvents.status}`);
                 }
@@ -88,7 +107,7 @@ export function HKDemoStudio() {
             }
         };
         loadArtifacts();
-    }, [baseUrl, appendLog]);
+    }, [baseUrl, appendLog, selectedRun]);
 
     // Progress Logic
     const replayProgress = useCallback((currentPulse: number) => {
@@ -255,6 +274,18 @@ export function HKDemoStudio() {
                                     <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden"><div className="h-full bg-blue-500 transition-all duration-700 ease-out" style={{ width: `${workflow.task_summary.progress}%` }} /></div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
+                                    <div className="col-span-2 space-y-1">
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Target Scenario</label>
+                                        <select
+                                            value={selectedRun}
+                                            onChange={(e) => setSelectedRun(e.target.value)}
+                                            className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-xs text-slate-200 outline-none focus:border-blue-500/50"
+                                        >
+                                            {availableRuns.map(r => (
+                                                <option key={r} value={r}>{r.replace('run_', '').replace('.json', '')}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                     <button disabled={busy} onClick={runOneClick} className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-bold text-white hover:bg-blue-500 transition-all disabled:opacity-50"><Sparkles size={16} /> One-Click Replay</button>
                                     <button disabled={busy || workflow.status === 'completed'} onClick={runPulse} className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold hover:bg-white/10 transition-all">Pulse</button>
                                     <button disabled={busy} onClick={() => { setEvents([]); setPulseIndex(0); setWorkflow({ status: 'inactive', task_summary: { total: 11, completed: 0, progress: 0 } }); }} className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold hover:bg-white/10 transition-all">Clear</button>
