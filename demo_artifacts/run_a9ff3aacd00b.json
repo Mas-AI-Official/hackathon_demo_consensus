@@ -1,0 +1,26 @@
+{
+  "run_id": "run_a9ff3aacd00b",
+  "updated_at": "2026-02-10T23:59:50.577053",
+  "count": 1,
+  "events": [
+    {
+      "event_id": "evt_37c9149cbdb1",
+      "run_id": "run_a9ff3aacd00b",
+      "pulse_id": null,
+      "ts": "2026-02-10T23:59:50.577053",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    }
+  ]
+}

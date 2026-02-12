@@ -1,0 +1,58 @@
+{
+  "run_id": "run_33f3f6ef28d2",
+  "updated_at": "2026-02-11T03:30:53.753313",
+  "count": 3,
+  "events": [
+    {
+      "event_id": "evt_21b63ff96df8",
+      "run_id": "run_33f3f6ef28d2",
+      "pulse_id": null,
+      "ts": "2026-02-11T03:30:51.008019",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_9b9ef42cb09a",
+      "run_id": "run_33f3f6ef28d2",
+      "pulse_id": "pulse_1",
+      "ts": "2026-02-11T03:30:53.738773",
+      "type": "pulse_started",
+      "from": "workflow.orchestrator",
+      "to": "agent.mesh",
+      "title": "Pulse 1 started",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "pulse_index": 1
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_4d63efa28de4",
+      "run_id": "run_33f3f6ef28d2",
+      "pulse_id": "pulse_1",
+      "ts": "2026-02-11T03:30:53.753313",
+      "type": "workflow_idle",
+      "from": "workflow.orchestrator",
+      "to": "workflow.hk_consensus",
+      "title": "No remaining tasks to progress",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "status": "completed"
+      },
+      "parent_event_id": null,
+      "severity": "low"
+    }
+  ]
+}

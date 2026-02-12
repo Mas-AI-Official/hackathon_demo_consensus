@@ -1,0 +1,24 @@
+{
+  "run_id": "run_0dcadffa36c7",
+  "updated_at": "2026-02-10T22:16:43.960511",
+  "count": 1,
+  "events": [
+    {
+      "event_id": "evt_36cac1d63e82",
+      "run_id": "run_0dcadffa36c7",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:16:43.960511",
+      "type": "workflow_reset",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "Workflow reset to baseline",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "project_id": "proj_hk_consensus_2026",
+        "reset_by": "founder"
+      },
+      "parent_event_id": null,
+      "severity": "low"
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "run_id": "run_d40c5b1e6f07",
+  "updated_at": "2026-02-10T22:06:16.512308",
+  "count": 11,
+  "events": [
+    {
+      "event_id": "evt_e87644de960c",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:10.767859",
+      "type": "workflow_reset",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "Workflow reset to baseline",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "project_id": "proj_hk_consensus_2026",
+        "reset_by": "founder"
+      },
+      "parent_event_id": null,
+      "severity": "low"
+    },
+    {
+      "event_id": "evt_f79cbe060624",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:13.142252",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_559c63313caf",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:14.871352",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_2e45e2f91bd2",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:15.334829",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_6bf6e00b7302",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:15.536832",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_cf60553dd343",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:15.709392",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_db68ec16c526",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:15.933600",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_fcf6fcbf8ae7",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:16.032135",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_60a52bfff479",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:16.201173",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_62510ef9ebed",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:16.356811",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    },
+    {
+      "event_id": "evt_356e8f453415",
+      "run_id": "run_d40c5b1e6f07",
+      "pulse_id": null,
+      "ts": "2026-02-10T22:06:16.512308",
+      "type": "workflow_activated",
+      "from": "founder.panel",
+      "to": "workflow.hk_consensus",
+      "title": "HK workflow activated",
+      "payload": {
+        "workflow_id": "hk_consensus_2026",
+        "reset": false,
+        "project_id": "proj_hk_consensus_2026",
+        "seeded_tasks": 0,
+        "seeded_milestones": 0
+      },
+      "parent_event_id": null,
+      "severity": null
+    }
+  ]
+}
