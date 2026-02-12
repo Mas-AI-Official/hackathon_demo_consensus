@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Play, RefreshCw, Sparkles, X, Terminal, Workflow, ShieldAlert, FileText } from 'lucide-react';
+import { Play, RefreshCw, Sparkles, X, Terminal, Workflow, ShieldAlert, FileText, ChevronDown } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import { Background, Controls, MarkerType, ReactFlow, type Edge, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -54,26 +54,46 @@ export function HKDemoStudio() {
     const [allDemoEvents, setAllDemoEvents] = useState<WorkflowTraceEvent[]>([]);
     const [pulseIndex, setPulseIndex] = useState(0);
 
+    // New Multi-Run State
+    const [availableRuns, setAvailableRuns] = useState<string[]>(['run_events.json']);
+    const [selectedRun, setSelectedRun] = useState('run_events.json');
+
     const appendLog = useCallback((line: string) => {
         const stamp = new Date().toLocaleTimeString();
         setLogs((prev) => [`${stamp}  ${line}`, ...prev].slice(0, 30));
     }, []);
 
-    // 1. Load Replay Artifacts
+    // 1. Load Replay Artifacts & Manifest
     useEffect(() => {
         const loadArtifacts = async () => {
             try {
-                // Ensure base path treatment is consistent
                 const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
-                // Fetch run_events.json
-                const jsonUrl = `${cleanBase}demo_artifacts/run_events.json`;
+                // Load Manifest if we haven't yet (or only have default)
+                if (availableRuns.length <= 1) {
+                    try {
+                        const resManifest = await fetch(`${cleanBase}demo_artifacts/manifest.json`);
+                        if (resManifest.ok) {
+                            const list = await resManifest.json();
+                            if (Array.isArray(list)) {
+                                setAvailableRuns(list.sort());
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Manifest load failed', e);
+                    }
+                }
+
+                // Fetch Selected Trace
+                const jsonUrl = `${cleanBase}demo_artifacts/${selectedRun}`;
                 const resEvents = await fetch(jsonUrl);
                 if (resEvents.ok) {
                     const data = await resEvents.json();
                     const rawEvents = Array.isArray(data) ? data : (data.events || []);
                     setAllDemoEvents(rawEvents);
-                    appendLog('Strategy trace artifacts loaded into local memory.');
+                    appendLog(`Activated Trace: ${selectedRun} (${rawEvents.length} events)`);
+                } else {
+                    appendLog(`Failed to load trace: ${selectedRun}`);
                 }
 
                 // Fetch security_report.md
@@ -82,16 +102,16 @@ export function HKDemoStudio() {
                 if (resReport.ok) {
                     const text = await resReport.text();
                     setReport(text);
-                    appendLog('Security report artifact synchronized.');
+                    appendLog('Security audit ledger synchronized.');
                 }
 
             } catch (err) {
                 console.error('Artifact load failed', err);
-                appendLog('Critical error: Could not load replay artifacts.');
+                appendLog('Error: Could not load replay artifacts.');
             }
         };
         loadArtifacts();
-    }, [baseUrl, appendLog]);
+    }, [baseUrl, appendLog, selectedRun, availableRuns.length]);
 
     // 2. Optimized Progress Logic
     const replayProgress = useCallback((currentPulse: number) => {
@@ -144,7 +164,7 @@ export function HKDemoStudio() {
         setBusy(true);
         setEvents([]);
         setPulseIndex(0);
-        setRunId('run_static_replay');
+        setRunId(selectedRun.replace('.json', ''));
         setWorkflow((prev: any) => ({ ...prev, status: 'active' }));
 
         const totalPulses = 11;
@@ -274,6 +294,25 @@ export function HKDemoStudio() {
                                     <button disabled={busy} onClick={runOneClick} className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-bold text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/40 disabled:opacity-50"><Sparkles size={16} /> One-Click Replay</button>
                                     <button disabled={busy || workflow.status === 'completed'} onClick={runPulse} className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold hover:bg-white/10 transition-all">Incremental Pulse</button>
                                     <button disabled={busy} onClick={() => { setEvents([]); setPulseIndex(0); setWorkflow({ status: 'inactive', task_summary: { total: 11, completed: 0, progress: 0 } }); }} className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold hover:bg-white/10 transition-all">Clear Trace</button>
+                                </div>
+
+                                <div className="pt-4 border-t border-white/5">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">Select Recorded Session <ChevronDown size={10} /></label>
+                                    <select
+                                        className="w-full bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 cursor-pointer appearance-none hover:bg-white/5 transition-colors"
+                                        onChange={(e) => {
+                                            const file = e.target.value;
+                                            setEvents([]);
+                                            setPulseIndex(0);
+                                            setWorkflow({ status: 'inactive', task_summary: { total: 11, completed: 0, progress: 0 } });
+                                            setSelectedRun(file);
+                                        }}
+                                        value={selectedRun}
+                                    >
+                                        {availableRuns.map(r => (
+                                            <option key={r} value={r}>{r}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
                         </div>
