@@ -35,7 +35,7 @@ const toActorId = (v: string) => String(v || 'system').replace(/[^a-zA-Z0-9_-]/g
 
 export function HKDemoStudio() {
     const timelineRef = useRef<HTMLDivElement | null>(null);
-    const [baseUrl] = useState((import.meta as any).env.BASE_URL || '/hackathon_demo_consensus/');
+    const [baseUrl] = useState('./');
 
     // UI State
     const [workflow, setWorkflow] = useState<any>({

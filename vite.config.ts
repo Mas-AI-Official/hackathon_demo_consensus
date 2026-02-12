@@ -8,7 +8,7 @@ export default defineConfig({
         react(),
         tailwindcss(),
     ],
-    base: '/hackathon_demo_consensus/',
+    base: './',
     build: {
         outDir: 'dist',
         emptyOutDir: true,
