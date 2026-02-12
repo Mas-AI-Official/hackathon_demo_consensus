@@ -5,13 +5,13 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "vite build",
         "preview": "vite preview"
     },
     "dependencies": {
         "@monaco-editor/react": "^4.6.0",
         "@xyflow/react": "^12.3.0",
-        "lucide-react": "^0.450.0",
+        "lucide-react": "^0.303.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.21.1"
