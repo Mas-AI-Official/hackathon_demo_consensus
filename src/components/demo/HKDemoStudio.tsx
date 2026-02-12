@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Play, RefreshCw, Sparkles, X, Terminal, Workflow, ShieldAlert, FileText, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Play, RefreshCw, Sparkles, X, ChevronDown } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import { Background, Controls, MarkerType, ReactFlow, type Edge, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-// Replay Types
+// Replay Types (Adapted for Static Mode)
 export type WorkflowTraceEvent = {
     event_id: string;
     run_id: string;
@@ -32,52 +32,63 @@ contract DemoVault {
 }`;
 
 const toActorId = (v: string) => String(v || 'system').replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
+const ts = (v: string) => new Date(v || '').getTime() || 0;
 
 export function HKDemoStudio() {
+    // State
     const timelineRef = useRef<HTMLDivElement | null>(null);
     const [baseUrl] = useState('./');
 
-    // UI State
+    // UI State (Matches Original)
     const [workflow, setWorkflow] = useState<any>({
         status: 'inactive',
         task_summary: { total: 11, pending: 11, running: 0, completed: 0, progress: 0 },
-        event_dates: { start: '2026-02-11', end: '2026-02-12' }
+        event_dates: { start: '2026-02-10', end: '2026-02-12' }
     });
+    const [defiHealth, setDefiHealth] = useState<any>({ slither: { installed: true } });
+    const [vision, setVision] = useState<any>({ success: true, ready: true, sources_count: 1 });
     const [scan, setScan] = useState<any>(null);
+    const [scanId, setScanId] = useState<string | null>(null);
     const [report, setReport] = useState('');
     const [reportModalOpen, setReportModalOpen] = useState(false);
-    const [contractPath] = useState('contracts/DemoVault.sol');
+    const [mode, setMode] = useState<'path' | 'inline'>('path');
+    const [codeEditable, setCodeEditable] = useState(false);
+    const [contractPath, setContractPath] = useState('contracts/DemoVault.sol');
+    const [inlineCode, setInlineCode] = useState(SAMPLE_CONTRACT);
     const [busy, setBusy] = useState(false);
     const [runId, setRunId] = useState<string | null>(null);
     const [events, setEvents] = useState<WorkflowTraceEvent[]>([]);
     const [logs, setLogs] = useState<string[]>([]);
-    const [allDemoEvents, setAllDemoEvents] = useState<WorkflowTraceEvent[]>([]);
-    const [pulseIndex, setPulseIndex] = useState(0);
 
-    // New Multi-Run State
+    // Static Replay State
+    const [allDemoEvents, setAllDemoEvents] = useState<WorkflowTraceEvent[]>([]);
     const [availableRuns, setAvailableRuns] = useState<string[]>(['run_events.json']);
     const [selectedRun, setSelectedRun] = useState('run_events.json');
 
     const appendLog = useCallback((line: string) => {
         const stamp = new Date().toLocaleTimeString();
-        setLogs((prev) => [`${stamp}  ${line}`, ...prev].slice(0, 30));
+        setLogs((prev) => [`${stamp}  ${line}`, ...prev].slice(0, 20));
     }, []);
 
-    // 1. Load Replay Artifacts & Manifest
+    const codeContent = useMemo(() => (
+        mode === 'inline'
+            ? inlineCode
+            : `// Path mode preview\n// Scan target: ${contractPath}\n\n${inlineCode}`
+    ), [mode, inlineCode, contractPath]);
+
+    // 1. Load Replay Artifacts & Manifest (Static Logic)
     useEffect(() => {
         const loadArtifacts = async () => {
             try {
                 const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
-                // Load Manifest if we haven't yet (or only have default)
+                // Load Manifest
                 if (availableRuns.length <= 1) {
                     try {
                         const resManifest = await fetch(`${cleanBase}demo_artifacts/manifest.json`);
                         if (resManifest.ok) {
                             const list = await resManifest.json();
-                            if (Array.isArray(list)) {
-                                setAvailableRuns(list.sort());
-                            }
+                            if (Array.isArray(list)) setAvailableRuns(list.sort());
                         }
                     } catch (e) {
                         console.warn('Manifest load failed', e);
@@ -96,13 +107,13 @@ export function HKDemoStudio() {
                     appendLog(`Failed to load trace: ${selectedRun}`);
                 }
 
-                // Fetch security_report.md
+                // Fetch Report (Pre-load)
                 const reportUrl = `${cleanBase}demo_artifacts/security_report.md`;
                 const resReport = await fetch(reportUrl);
                 if (resReport.ok) {
                     const text = await resReport.text();
-                    setReport(text);
-                    appendLog('Security audit ledger synchronized.');
+                    // We don't set report state immediately, we wait for "buildReport"
+                    // But for static demo, we can store it in a temp variable or just fetch again
                 }
 
             } catch (err) {
@@ -113,59 +124,36 @@ export function HKDemoStudio() {
         loadArtifacts();
     }, [baseUrl, appendLog, selectedRun, availableRuns.length]);
 
-    // 2. Optimized Progress Logic
-    const replayProgress = useCallback((currentPulse: number) => {
-        const total = 11;
-        const progress = Math.min(100, Math.round((currentPulse / total) * 100));
-        setWorkflow((prev: any) => ({
-            ...prev,
-            task_summary: {
-                total,
-                completed: currentPulse,
-                progress
-            },
-            status: progress === 100 ? 'completed' : 'active'
-        }));
-    }, []);
+    // 2. Report View Logic
+    const visibleReport = report.length > 12000 ? `${report.slice(0, 12000)}\n\n[Preview truncated.]` : report;
+    const readableReport = useMemo(
+        () => visibleReport
+            .replace(/\r\n/g, '\n')
+            .replace(/\*\*/g, '')
+            .replace(/`/g, '')
+            .replace(/^#{1,6}\s*/gm, '')
+            .replace(/^\s*-\s+/gm, '- '),
+        [visibleReport]
+    );
+    const reportLines = useMemo(() => readableReport.split('\n'), [readableReport]);
 
+    // 3. Replay Logic (Static)
     const addEventsBatch = useCallback((batch: WorkflowTraceEvent[]) => {
         setEvents((prev) => {
             const existingIds = new Set(prev.map(e => e.event_id));
             const uniqueNew = batch.filter(e => !existingIds.has(e.event_id));
-            return [...prev, ...uniqueNew].sort((a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime());
+            return [...prev, ...uniqueNew].sort((a, b) => ts(a.ts) - ts(b.ts));
         });
         batch.forEach(e => appendLog(`[${e.type}] ${e.title}`));
     }, [appendLog]);
-
-    // 3. Replay Actions
-    const runPulse = async () => {
-        if (busy || pulseIndex >= 11) return;
-        setBusy(true);
-        const nextIdx = pulseIndex + 1;
-
-        const pulseBatch = allDemoEvents.filter(e => {
-            if (nextIdx === 1 && !e.pulse_id) return true;
-            return e.pulse_id === `pulse_${nextIdx}`;
-        });
-
-        if (pulseBatch.length > 0) {
-            addEventsBatch(pulseBatch);
-        } else {
-            appendLog(`Simulating pulse ${nextIdx} (no events in trace)...`);
-        }
-
-        replayProgress(nextIdx);
-        setPulseIndex(nextIdx);
-        setBusy(false);
-    };
 
     const runOneClick = async () => {
         if (busy) return;
         setBusy(true);
         setEvents([]);
-        setPulseIndex(0);
-        setRunId(selectedRun.replace('.json', ''));
-        setWorkflow((prev: any) => ({ ...prev, status: 'active' }));
+        const newRunId = selectedRun.replace('.json', '');
+        setRunId(newRunId);
+        setWorkflow((prev: any) => ({ ...prev, status: 'active', task_summary: { ...prev.task_summary, progress: 0 } }));
 
         const totalPulses = 11;
         for (let i = 1; i <= totalPulses; i++) {
@@ -176,271 +164,328 @@ export function HKDemoStudio() {
 
             if (batch.length > 0) {
                 addEventsBatch(batch);
-                await new Promise(r => setTimeout(r, 400)); // Delay per pulse
+                await new Promise(r => setTimeout(r, 400));
             } else {
                 appendLog(`Advancing pulse ${i}...`);
                 await new Promise(r => setTimeout(r, 150));
             }
 
-            replayProgress(i);
-            setPulseIndex(i);
+            // Update Progress
+            const progress = Math.min(100, Math.round((i / totalPulses) * 100));
+            setWorkflow((prev: any) => ({
+                ...prev,
+                task_summary: {
+                    total: totalPulses,
+                    completed: i,
+                    progress
+                },
+                status: progress === 100 ? 'completed' : 'active'
+            }));
         }
 
         appendLog('Strategic consensus achieved. System final 100%.');
         setBusy(false);
     };
 
-    const startScan = async () => {
+    const activateWorkflow = async () => {
         setBusy(true);
-        setScan({ status: 'scanning', findings: [] });
-        appendLog('DeFi Scanner (Static Logic) initiated...');
-        await new Promise(r => setTimeout(r, 1200));
-        setScan({
-            status: 'completed',
-            findings: [
-                { id: 'f1', title: 'Critical: Reentrancy Exposure', type: 'SWC-107' },
-                { id: 'f2', title: 'High: Unprotected Withdrawal', type: 'Logic' }
-            ]
-        });
-        appendLog('Scan complete. Vulnerabilities identified for debate.');
+        appendLog('Simulating activation...');
+        await new Promise(r => setTimeout(r, 800));
+        setWorkflow((prev: any) => ({ ...prev, status: 'active' }));
+        setRunId('run_manual_activation');
         setBusy(false);
     };
 
-    // 4. Unique Node/Edge IDs for ReactFlow
-    const allActors = useMemo(() => {
-        const actors = new Set<string>();
-        ['founder.panel', 'workflow.hk_consensus', 'workflow.orchestrator', 'agent.mesh', 'agent.orchestrator', 'governance.council', 'policy.center', 'workflow.executor', 'risk_guard', 'ops_guard'].forEach(a => actors.add(a));
-        allDemoEvents.forEach(e => { if (e.from) actors.add(e.from); if (e.to) actors.add(e.to); });
-        return Array.from(actors);
-    }, [allDemoEvents]);
+    const runPulse = async () => {
+        if (busy) return;
+        setBusy(true);
+        appendLog('Executing single pulse...');
+        await new Promise(r => setTimeout(r, 500));
+        addEventsBatch(allDemoEvents.slice(events.length, events.length + 5));
+        setWorkflow((prev: any) => ({ ...prev, status: 'active' }));
+        setBusy(false);
+    };
 
-    const graphElements = useMemo(() => {
-        const nodes: Node[] = allActors.map((a, i) => ({
-            id: `node-${toActorId(a)}`,
-            data: { label: a },
-            position: { x: (i % 3) * 210, y: Math.floor(i / 3) * 110 },
-            style: {
-                background: '#0a0f1d', color: '#e2e8f0', border: '1px solid rgba(56, 189, 248, 0.4)',
-                borderRadius: '12px', fontSize: '11px', width: 160, textAlign: 'center', padding: '12px', fontWeight: 'bold',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            },
-        }));
+    const resetWorkflow = async () => {
+        setBusy(true);
+        setEvents([]);
+        setReport('');
+        setScan(null);
+        setScanId(null);
+        setWorkflow({
+            status: 'inactive',
+            task_summary: { total: 11, pending: 11, running: 0, completed: 0, progress: 0 },
+            event_dates: { start: '2026-02-10', end: '2026-02-12' }
+        });
+        setRunId(null);
+        appendLog('Workflow reset.');
+        setBusy(false);
+    };
 
-        const lastEvt = events.length ? events[events.length - 1] : null;
-        const edges: Edge[] = events.map((e, idx) => ({
-            id: `edge-${e.event_id}-${idx}`,
-            source: `node-${toActorId(e.from)}`,
-            target: `node-${toActorId(e.to)}`,
-            label: e.type,
-            animated: e.event_id === lastEvt?.event_id,
-            markerEnd: { type: MarkerType.ArrowClosed },
-            style: { stroke: e.event_id === lastEvt?.event_id ? '#22c55e' : 'rgba(56, 189, 248, 0.4)', strokeWidth: e.event_id === lastEvt?.event_id ? 3 : 1 },
-            labelStyle: { fill: '#94a3b8', fontSize: 10 }
-        }));
-        return { nodes, edges };
-    }, [allActors, events]);
+    const startScan = async () => {
+        setBusy(true);
+        setScanId('scan_' + Math.random().toString(36).substr(2, 9));
+        setScan({ status: 'scanning', findings: [] });
+        appendLog('DeFi Scanner (Static) initiated...');
+        await new Promise(r => setTimeout(r, 1500));
+        setScan({
+            status: 'completed',
+            findings: [
+                { id: 'f1', title: 'Critical: Reentrancy Exposure', severity: 'Critical' },
+                { id: 'f2', title: 'High: Unprotected Withdrawal', severity: 'High' }
+            ]
+        });
+        appendLog('Scan complete.');
+        setBusy(false);
+    };
+
+    const buildReport = async () => {
+        setBusy(true);
+        try {
+            const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+            const reportUrl = `${cleanBase}demo_artifacts/security_report.md`;
+            const resReport = await fetch(reportUrl);
+            if (resReport.ok) {
+                const text = await resReport.text();
+                setReport(text);
+                setReportModalOpen(true);
+                appendLog('Report generated from verified ledger.');
+            } else {
+                appendLog('Error: Report artifact missing.');
+            }
+        } catch (e) {
+            appendLog('Error loading report.');
+        }
+        setBusy(false);
+    };
 
     const timelineGroups = useMemo(() => {
         const g = new Map<string, WorkflowTraceEvent[]>();
         for (const e of events) {
-            const key = e.pulse_id || 'Initialization';
+            const key = e.pulse_id || 'run';
             if (!g.has(key)) g.set(key, []);
             g.get(key)?.push(e);
         }
         return Array.from(g.entries());
     }, [events]);
 
-    const govEvents = useMemo(() => events.filter(e => ['agent_message', 'governance_vote', 'decision_finalized'].includes(e.type)), [events]);
+    const govEvents = useMemo(() => events.filter((e) => ['agent_message', 'governance_vote', 'decision_finalized'].includes(e.type)), [events]);
+
+    // Graph Logic (Original)
+    const graph = useMemo(() => {
+        const actors: string[] = [];
+        const seen = new Set<string>();
+        for (const e of events) {
+            [e.from, e.to].forEach((a) => {
+                if (a && !seen.has(a)) {
+                    seen.add(a);
+                    actors.push(a);
+                }
+            });
+        }
+        const nodes: Node[] = actors.map((a, i) => ({
+            id: toActorId(a),
+            data: { label: a },
+            position: { x: 60 + (i % 4) * 220, y: 50 + Math.floor(i / 4) * 110 },
+            draggable: false,
+            selectable: false,
+            style: { background: '#0e1b35', color: '#dbe7ff', border: '1px solid rgba(86,136,255,0.45)', borderRadius: 10, fontSize: 12, width: 150, textAlign: 'center' },
+        }));
+        const last = events.length ? events[events.length - 1].event_id : '';
+        const edges: Edge[] = events.map((e, idx) => ({
+            id: e.event_id || `edge-${idx}`,
+            source: toActorId(e.from),
+            target: toActorId(e.to),
+            label: e.type,
+            animated: e.event_id === last,
+            markerEnd: { type: MarkerType.ArrowClosed },
+            style: { stroke: e.event_id === last ? '#10b981' : '#5b7fff', strokeWidth: e.event_id === last ? 2.2 : 1.3 },
+            labelStyle: { fill: '#9db5ff', fontSize: 11 },
+        }));
+        return { nodes, edges };
+    }, [events]);
 
     useEffect(() => {
-        if (timelineRef.current) timelineRef.current.scrollTop = timelineRef.current.scrollHeight;
+        const el = timelineRef.current;
+        if (!el) return;
+        el.scrollTop = el.scrollHeight;
     }, [events.length]);
 
+    // RENDER (Original UI with Selectors injected)
     return (
-        <div className="h-screen w-screen overflow-hidden bg-[#020617] text-slate-200">
-            <div className="flex h-full flex-col font-sans">
-                {/* Header */}
-                <header className="flex items-center justify-between border-b border-white/5 bg-slate-950/50 backdrop-blur-xl px-6 py-4">
-                    <div className="flex items-center gap-4">
-                        <div className="rounded-lg bg-blue-500/10 p-2 text-blue-400 border border-blue-400/20"><Workflow size={20} /></div>
-                        <div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">Autonomous Security Governance</p>
-                            <h1 className="text-xl font-bold tracking-tight">Daena Consensus <span className="text-slate-500 font-normal">| Hackathon Replay Studio</span></h1>
-                        </div>
+        <div className="h-screen w-screen overflow-hidden bg-[#050814] text-white font-sans">
+            <div className="flex h-full flex-col">
+                <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                    <div className="flex items-center gap-2">
+                        <button className="rounded-md border border-white/20 bg-white/5 p-2" disabled><ArrowLeft size={14} /></button>
+                        <div><p className="text-[11px] uppercase tracking-[0.2em] text-cyan-300">Daena Demo Studio</p><h1 className="text-lg font-semibold">HK Consensus One-Page Demo</h1></div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <button onClick={() => window.open('https://youtu.be/omzfIib2gkg', '_blank')} className="flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-4 py-2 text-xs font-bold text-blue-300 hover:bg-blue-500/20 transition-all"><Play size={14} /> Watch Demo</button>
-                        <button onClick={() => window.location.reload()} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-slate-400 hover:bg-white/10 transition-all"><RefreshCw size={14} /> Reset State</button>
+                    <div className="flex items-center gap-2">
+                        <button onClick={() => window.open('https://youtu.be/omzfIib2gkg', '_blank')} className="hidden rounded-md border border-white/20 bg-white/5 px-3 py-2 text-xs md:block"><span className="inline-flex items-center gap-1"><Play size={12} /> Watch Demo</span></button>
+                        <button onClick={() => window.location.reload()} className="rounded-md border border-white/20 bg-white/5 px-3 py-2 text-xs"><span className="inline-flex items-center gap-1"><RefreshCw size={12} /> Refresh</span></button>
                     </div>
                 </header>
 
-                <main className="grid flex-1 grid-cols-12 gap-4 overflow-hidden p-4">
-                    {/* LEFT PANEL: Workflow & Control */}
-                    <section className="col-span-3 flex flex-col gap-4 min-h-0">
-                        <div className="rounded-2xl border border-white/5 bg-slate-900/50 p-5 backdrop-blur-md">
+                <main className="grid h-[calc(100vh-62px)] grid-cols-1 gap-3 overflow-hidden p-3 xl:grid-cols-12">
+                    {/* LEFT COLUMN: WORKFLOW */}
+                    <section className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-black/30 p-4 text-base xl:col-span-3">
+                        <p className="text-xs uppercase tracking-[0.18em] text-cyan-200">Workflow</p>
+                        <p className="mt-1 text-2xl font-semibold">{workflow?.status || 'inactive'}</p>
+                        <p className="text-sm text-gray-400">{workflow?.event_dates?.start} to {workflow?.event_dates?.end}</p>
+                        <div className="mt-2 rounded border border-white/10 bg-black/40 px-3 py-2 text-xs text-cyan-200">Run ID: {runId || 'not started'}</div>
+
+                        {/* INJECTED: Multi-Trace Selector */}
+                        <div className="mt-2">
+                            <div className="relative">
+                                <select
+                                    className="w-full appearance-none rounded border border-white/10 bg-slate-900 px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-cyan-500"
+                                    value={selectedRun}
+                                    onChange={(e) => {
+                                        setSelectedRun(e.target.value);
+                                        setEvents([]);
+                                        setWorkflow({ ...workflow, status: 'inactive', task_summary: { ...workflow.task_summary, progress: 0 } });
+                                        setRunId(null);
+                                    }}
+                                >
+                                    {availableRuns.map(r => <option key={r} value={r}>{r}</option>)}
+                                </select>
+                                <ChevronDown className="absolute right-2 top-2.5 text-gray-500 pointer-events-none" size={12} />
+                            </div>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                            <div className="rounded-lg border border-white/10 bg-black/40 p-2">Tasks: {workflow?.task_summary?.total ?? 0}</div>
+                            <div className="rounded-lg border border-white/10 bg-black/40 p-2">Running: {workflow?.task_summary?.running ?? 0}</div>
+                            <div className="rounded-lg border border-white/10 bg-black/40 p-2">Completed: {workflow?.task_summary?.completed ?? 0}</div>
+                            <div className="rounded-lg border border-white/10 bg-black/40 p-2">Progress: {workflow?.task_summary?.progress ?? 0}%</div>
+                        </div>
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                            <button disabled={busy} onClick={() => void runOneClick()} className="rounded-md bg-emerald-600 px-3 py-2 font-semibold disabled:bg-gray-700 shadow-lg shadow-emerald-900/40"><span className="inline-flex items-center gap-1"><Sparkles size={14} /> One-Click Run</span></button>
+                            <button disabled={busy} onClick={() => void activateWorkflow()} className="rounded-md bg-cyan-600 px-3 py-2 font-semibold disabled:bg-gray-700">Activate</button>
+                            <button disabled={busy || workflow?.status !== 'active'} onClick={() => void runPulse()} className="rounded-md bg-amber-600/70 px-3 py-2 font-semibold disabled:bg-gray-700">Run Pulse</button>
+                            <button disabled={busy} onClick={() => void resetWorkflow()} className="rounded-md bg-red-700/70 px-3 py-2 font-semibold disabled:bg-gray-700">Reset</button>
+                        </div>
+                        <div className="mt-3 flex min-h-0 flex-1 flex-col rounded border border-white/10 bg-black/40 p-3">
                             <div className="flex items-center justify-between">
-                                <span className={`rounded-md px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${workflow.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'}`}>{workflow.status}</span>
-                                <span className="text-[10px] font-mono text-slate-500">{runId || 'OFFLINE'}</span>
+                                <p className="text-sm font-semibold text-gray-100">Report Review</p>
+                                <span className="text-xs text-gray-400">{report ? `${report.length} chars` : 'empty'}</span>
                             </div>
-                            <div className="mt-4 space-y-4">
-                                <div>
-                                    <div className="flex items-end justify-between mb-2">
-                                        <p className="text-sm font-semibold text-slate-400">Network Consensus Progress</p>
-                                        <p className="text-xl font-black text-slate-100">{workflow.task_summary.progress}%</p>
-                                    </div>
-                                    <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden"><div className="h-full bg-blue-500 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(59,130,246,0.5)]" style={{ width: `${workflow.task_summary.progress}%` }} /></div>
+                            <div className="mt-2 flex min-h-0 flex-1 flex-col overflow-hidden rounded border border-white/10 bg-black/50 p-3">
+                                <div className="min-h-0 flex-1 overflow-y-auto space-y-1 text-sm leading-7 text-gray-200">
+                                    {report
+                                        ? reportLines.slice(0, 40).map((line, idx) => (
+                                            <p key={`${idx}-${line}`} className={line.includes(':') ? 'font-semibold text-cyan-100' : ''}>{line || '\u00A0'}</p>
+                                        ))
+                                        : <p className="text-gray-400">Generate report after completed scan.</p>}
                                 </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <button disabled={busy} onClick={runOneClick} className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-bold text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/40 disabled:opacity-50"><Sparkles size={16} /> One-Click Replay</button>
-                                    <button disabled={busy || workflow.status === 'completed'} onClick={runPulse} className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold hover:bg-white/10 transition-all">Incremental Pulse</button>
-                                    <button disabled={busy} onClick={() => { setEvents([]); setPulseIndex(0); setWorkflow({ status: 'inactive', task_summary: { total: 11, completed: 0, progress: 0 } }); }} className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold hover:bg-white/10 transition-all">Clear Trace</button>
-                                </div>
-
-                                <div className="pt-4 border-t border-white/5">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">Select Recorded Session <ChevronDown size={10} /></label>
-                                    <select
-                                        className="w-full bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 cursor-pointer appearance-none hover:bg-white/5 transition-colors"
-                                        onChange={(e) => {
-                                            const file = e.target.value;
-                                            setEvents([]);
-                                            setPulseIndex(0);
-                                            setWorkflow({ status: 'inactive', task_summary: { total: 11, completed: 0, progress: 0 } });
-                                            setSelectedRun(file);
-                                        }}
-                                        value={selectedRun}
-                                    >
-                                        {availableRuns.map(r => (
-                                            <option key={r} value={r}>{r}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Report Box */}
-                        <div className="flex flex-1 flex-col rounded-2xl border border-white/5 bg-slate-900/50 backdrop-blur-md overflow-hidden">
-                            <div className="flex items-center justify-between border-b border-white/5 bg-white/5 px-4 py-3">
-                                <h3 className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-400 uppercase"><FileText size={14} /> Security Report</h3>
-                                <button disabled={!report} onClick={() => setReportModalOpen(true)} className="rounded-lg bg-emerald-500/10 px-3 py-1 text-[10px] font-bold text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-30">VIEW FULL</button>
-                            </div>
-                            <div className="flex-1 overflow-y-auto p-4 text-[13px] leading-6 text-slate-300 font-mono">
-                                {report ? report.split('\n').slice(0, 30).map((l, i) => <p key={i} className={l.startsWith('#') ? 'font-black text-blue-400' : ''}>{l || '\u00A0'}</p>) : <p className="text-slate-500 italic mt-10 text-center">Scan required to generate audit trail.</p>}
+                                <button
+                                    disabled={!report}
+                                    onClick={() => setReportModalOpen(true)}
+                                    className="mt-2 rounded border border-cyan-400/40 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    View Full Report Popup
+                                </button>
                             </div>
                         </div>
                     </section>
 
-                    {/* CENTER PANEL: Security & Code */}
-                    <section className="col-span-3 flex flex-col gap-4 min-h-0">
-                        <div className="flex flex-1 flex-col rounded-2xl border border-white/5 bg-black/40 backdrop-blur-md overflow-hidden shadow-2xl">
-                            <div className="flex items-center justify-between bg-slate-950/80 px-4 py-3 border-b border-white/5">
-                                <div className="flex items-center gap-2"><div className="h-3 w-3 rounded-full bg-red-500/50" /><div className="h-3 w-3 rounded-full bg-amber-500/50" /><div className="h-3 w-3 rounded-full bg-emerald-500/50" /></div>
-                                <p className="text-[10px] font-mono font-bold text-slate-500 tracking-widest">{contractPath}</p>
-                            </div>
-                            <div className="flex-1 min-h-0 relative">
-                                <Editor height="100%" language="sol" theme="vs-dark" value={SAMPLE_CONTRACT} options={{ readOnly: true, minimap: { enabled: false }, fontSize: 13, padding: { top: 16 } }} />
-                            </div>
-                            <div className="p-4 bg-slate-950/50 border-t border-white/5">
-                                <button disabled={busy} onClick={startScan} className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 font-bold text-white hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-900/40 disabled:opacity-50"><ShieldAlert size={16} /> Run DeFi Consensus Scan</button>
-                                <div className="mt-3 min-h-20 space-y-2">
-                                    {scan?.findings?.map((f: any) => (
-                                        <div key={f.id} className="rounded-lg border border-red-500/20 bg-red-500/5 p-2 animate-in slide-in-from-left">
-                                            <p className="text-xs font-bold text-red-300">{f.title}</p>
-                                            <p className="text-[10px] text-red-400 font-mono">{f.type}</p>
-                                        </div>
-                                    )) || (scan?.status === 'scanning' ? <div className="text-center py-4"><p className="text-xs text-blue-400 font-bold animate-pulse uppercase tracking-widest">Analyzing Bytecode...</p></div> : <p className="text-center text-xs text-slate-600 mt-4 italic">No risks identified yet.</p>)}
-                                </div>
-                            </div>
+                    {/* MIDDLE COLUMN: DEFI SECURITY */}
+                    <section className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-black/30 p-4 text-base xl:col-span-3">
+                        <p className="text-xs uppercase tracking-[0.18em] text-indigo-200">DeFi Security</p>
+                        <p className="mt-1 text-sm text-gray-300">Slither: {defiHealth?.slither?.installed ? 'Ready' : 'Missing'}</p>
+                        <div className="mt-2 flex gap-2 text-sm">
+                            <button onClick={() => setMode('path')} className={`rounded px-2 py-1 ${mode === 'path' ? 'bg-cyan-600' : 'bg-white/10'}`}>Path</button>
+                            <button onClick={() => setMode('inline')} className={`rounded px-2 py-1 ${mode === 'inline' ? 'bg-cyan-600' : 'bg-white/10'}`}>Inline</button>
                         </div>
-
-                        <div className="rounded-2xl border border-white/5 bg-slate-900/50 p-4">
-                            <h3 className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase mb-3"><Terminal size={14} /> Agent Transaction Log</h3>
-                            <div className="h-32 overflow-y-auto space-y-1 font-mono text-[11px] text-slate-400 custom-scrollbar">
-                                {logs.map((l, i) => <p key={i} className="border-l border-blue-500/20 pl-2 opacity-80">{l}</p>)}
-                                {logs.length === 0 && <p className="text-slate-600 italic">Waiting for broadcast...</p>}
-                            </div>
+                        <input value={contractPath} onChange={(e) => setContractPath(e.target.value)} className="mt-2 rounded border border-white/20 bg-black/50 px-3 py-3 text-base font-semibold text-white focus:outline-none focus:border-cyan-500" />
+                        <div className="mt-2 overflow-hidden rounded border border-white/15 bg-[#0a1024]">
+                            <Editor height="250px" language="sol" theme="vs-dark" value={codeContent} onChange={(v) => { if (mode === 'inline' && codeEditable) setInlineCode(v ?? ''); }} options={{ readOnly: mode === 'path' || !codeEditable, minimap: { enabled: false }, lineNumbers: 'on', wordWrap: 'on', fontSize: 13, lineHeight: 22, automaticLayout: true }} />
+                        </div>
+                        <button disabled={busy} onClick={() => void startScan()} className="mt-2 rounded bg-indigo-600 px-3 py-2 text-sm font-semibold disabled:bg-gray-700 hover:bg-indigo-500 transition-all"><span className="inline-flex items-center gap-1"><Play size={13} /> Start Scan</span></button>
+                        <div className="mt-2 rounded border border-white/10 bg-black/40 p-2 text-sm">Scan: {scanId || 'none'} ({scan?.status || 'idle'})</div>
+                        <div className="mt-2 min-h-0 flex-1 overflow-y-auto rounded border border-white/10 bg-black/40 p-2 text-sm">{(scan?.findings || []).length === 0 ? <p className="text-gray-500">No findings yet.</p> : scan?.findings?.slice(0, 8).map((f: any) => <div key={f.id} className="mb-1 rounded border border-white/10 bg-black/50 p-2"><p className="font-semibold">{f.title}</p><p className="text-gray-400">{f.severity}</p></div>)}</div>
+                        <div className="mt-2 grid grid-cols-2 gap-2">
+                            <button disabled={!scanId || scan?.status !== 'completed'} onClick={() => void buildReport()} className="rounded bg-emerald-700 px-3 py-2 text-sm font-semibold disabled:bg-gray-700 hover:bg-emerald-600 transition-all">Generate Report</button>
+                            <button disabled={!report} onClick={() => setReportModalOpen(true)} className="rounded border border-cyan-400/40 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-100 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-cyan-500/20 transition-all">View Report</button>
                         </div>
                     </section>
 
-                    {/* RIGHT PANEL: Consensus Map & Timeline */}
-                    <section className="col-span-6 flex flex-col gap-4 min-h-0">
-                        <div className="flex-1 grid grid-rows-2 gap-4 min-h-0">
-                            <div className="relative rounded-2xl border border-white/10 bg-black/60 shadow-inner overflow-hidden">
-                                <div className="absolute top-4 left-4 z-10 p-2 bg-slate-900/80 rounded-lg border border-white/5 backdrop-blur-md">
-                                    <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none">Global Consensus Topology</p>
-                                </div>
-                                <ReactFlow nodes={graphElements.nodes} edges={graphElements.edges} fitView nodesDraggable={false} nodesConnectable={false} elementsSelectable={false}>
-                                    <Background color="#1e293b" gap={20} size={1} />
-                                    <Controls showInteractive={false} />
-                                </ReactFlow>
+                    {/* RIGHT COLUMN: LIVE READINESS & GRAPH */}
+                    <section className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-black/30 p-4 text-base xl:col-span-6">
+                        <p className="text-xs uppercase tracking-[0.18em] text-emerald-200">Live Readiness</p>
+                        <div className="mt-2 rounded border border-white/10 bg-black/40 px-3 py-2 text-sm">
+                            <div className="flex items-center gap-4 overflow-x-auto whitespace-nowrap">
+                                <span>Workflow active: <span className="text-cyan-200">{workflow?.status === 'active' ? 'Yes' : 'No'}</span></span>
+                                <span>DaenaVision ready: <span className="text-cyan-200">{vision.ready ? 'Yes' : 'No'}</span></span>
+                                <span>Vision sources: <span className="text-cyan-200">{vision?.sources_count ?? 0}</span></span>
                             </div>
-
-                            <div className="grid grid-cols-2 gap-4 min-h-0">
-                                <div className="flex flex-col rounded-2xl border border-white/5 bg-slate-900/50 backdrop-blur-md overflow-hidden">
-                                    <div className="bg-white/5 px-4 py-3 border-b border-white/5"><h3 className="text-xs font-bold text-slate-400 tracking-widest uppercase">Decentralized Timeline</h3></div>
-                                    <div ref={timelineRef} className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                                        {timelineGroups.map(([g, items]) => (
-                                            <div key={g} className="space-y-2">
-                                                <p className="text-[9px] font-black text-blue-500/50 uppercase tracking-widest border-b border-white/5 pb-1">{g}</p>
-                                                {items.map((e, idx) => (
-                                                    <div key={`${e.event_id}-${idx}`} className="rounded-xl bg-white/5 p-3 border border-white/5 hover:bg-white/10 transition-all group">
-                                                        <p className="text-xs font-bold text-slate-200">{e.title}</p>
-                                                        <div className="mt-1 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                                                            <span>{e.from} → {e.to}</span>
-                                                            <span className="text-blue-500/50">{e.type}</span>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ))}
-                                        {events.length === 0 && <p className="text-center text-slate-600 mt-20 italic">Awaiting network pulses...</p>}
+                        </div>
+                        <div className="mt-3 flex min-h-0 flex-1 flex-col rounded border border-white/10 bg-black/40 p-2">
+                            <div className="flex items-center justify-between">
+                                <p className="text-sm font-semibold text-gray-100">Live Workflow</p>
+                                <span className="text-[11px] text-cyan-300">{events.length} events</span>
+                            </div>
+                            <div className="mt-2 grid min-h-0 flex-1 grid-cols-5 grid-rows-2 gap-2">
+                                <div className="col-span-3 row-span-2 flex min-h-0 flex-col rounded border border-white/10 bg-black/45 p-2">
+                                    <p className="text-[11px] uppercase tracking-wider text-cyan-300">Call Graph</p>
+                                    <div className="mt-2 min-h-0 flex-1">
+                                        <ReactFlow nodes={graph.nodes} edges={graph.edges} fitView nodesDraggable={false} nodesConnectable={false} elementsSelectable={false}>
+                                            <Background color="#1e293b" gap={20} size={1} />
+                                            <Controls showInteractive={false} />
+                                        </ReactFlow>
                                     </div>
                                 </div>
-
-                                <div className="flex flex-col rounded-2xl border border-white/5 bg-slate-900/50 backdrop-blur-md overflow-hidden">
-                                    <div className="bg-white/5 px-4 py-3 border-b border-white/5"><h3 className="text-xs font-bold text-slate-400 tracking-widest uppercase">Governance Debate</h3></div>
-                                    <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-                                        {govEvents.map((e, idx) => (
-                                            <div key={`${e.event_id}-${idx}`} className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-3 animate-in fade-in zoom-in duration-300">
-                                                <p className="text-xs font-bold text-blue-100 mb-1">{e.title}</p>
-                                                {e.payload?.rationale ? (
-                                                    <p className="text-[11px] text-slate-400 italic leading-relaxed">{e.payload.rationale}</p>
-                                                ) : e.payload?.message ? (
-                                                    <p className="text-[11px] text-slate-400 leading-relaxed">{e.payload.message}</p>
-                                                ) : null}
-                                            </div>
-                                        ))}
-                                        {govEvents.length === 0 && <p className="text-center text-slate-600 mt-20 italic">No active debates detected.</p>}
-                                    </div>
+                                <div className="col-span-2 flex min-h-0 flex-col rounded border border-white/10 bg-black/45 p-2">
+                                    <p className="text-[11px] uppercase tracking-wider text-cyan-300">Timeline</p>
+                                    <div ref={timelineRef} className="mt-2 min-h-0 flex-1 overflow-y-auto space-y-2 text-xs">
+                                        {timelineGroups.length === 0 ? <p className="text-xs text-gray-500">Run One-Click or Pulse to view timeline.</p> : timelineGroups.map(([g, items]) => <div key={g} className="rounded border border-white/10 bg-black/30 p-2"><p className="text-[10px] uppercase tracking-wider text-cyan-300">{g}</p>{items.map((e) => <div key={e.event_id} className="mt-1 rounded border border-white/10 bg-black/30 px-2 py-1"><p className="text-xs">{e.title}</p><p className="text-[10px] text-gray-400">{e.from} -&gt; {e.to} · {e.type}</p></div>)}</div>)}</div>
+                                </div>
+                                <div className="col-span-2 flex min-h-0 flex-col rounded border border-white/10 bg-black/45 p-2">
+                                    <p className="text-[11px] uppercase tracking-wider text-cyan-300">Debate + Governance</p>
+                                    <div className="mt-2 min-h-0 flex-1 overflow-y-auto space-y-2 text-xs">
+                                        {govEvents.length === 0 ? <p className="text-xs text-gray-500">No debate/governance events yet.</p> : govEvents.map((e) => <div key={e.event_id} className="rounded border border-white/10 bg-black/30 p-2"><p className="text-xs font-semibold">{e.title}</p><p className="text-[10px] text-gray-400">{e.type} · {e.from} -&gt; {e.to}</p>{e.payload?.message && <p className="mt-1 text-xs text-gray-300">{String(e.payload.message)}</p>}{Array.isArray(e.payload?.votes) && e.payload.votes.map((v: any, i: number) => <p key={`${e.event_id}-${i}`} className="text-[11px] text-gray-300">{v.member}: <span className="text-cyan-300">{v.vote}</span></p>)}{e.payload?.rationale && <p className="mt-1 text-[11px] text-emerald-200">{String(e.payload.rationale)}</p>}</div>)}</div>
                                 </div>
                             </div>
+                        </div>
+                        <div className="mt-2 rounded border border-white/10 bg-black/40 p-2">
+                            <p className="text-xs uppercase tracking-wider text-slate-300">Event Log</p>
+                            <div className="mt-1 h-32 overflow-y-auto text-xs text-gray-300">{logs.length === 0 ? <p className="text-gray-500">No events yet.</p> : logs.map((l) => <p key={l} className="mb-1">{l}</p>)}</div>
                         </div>
                     </section>
                 </main>
-            </div>
 
-            {/* Full Report Modal */}
-            {reportModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-2xl animate-in fade-in duration-300">
-                    <div className="flex h-full w-full max-w-5xl flex-col rounded-3xl border border-white/10 bg-slate-900 shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
-                        <div className="flex items-center justify-between border-b border-white/10 px-8 py-5 bg-white/5">
-                            <div>
-                                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">Audit Ledger Entry</p>
-                                <h2 className="text-xl font-black text-slate-100">Final Security Consensus Report</h2>
+                {reportModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+                        <div className="flex h-[88vh] w-full max-w-5xl flex-col rounded-2xl border border-white/20 bg-[#0a1229] shadow-2xl">
+                            <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
+                                <div>
+                                    <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Report Viewer</p>
+                                    <p className="text-lg font-semibold text-white">Security Scan Report</p>
+                                </div>
+                                <button onClick={() => setReportModalOpen(false)} className="rounded border border-white/20 bg-white/5 p-2 text-white hover:bg-white/10">
+                                    <X size={16} />
+                                </button>
                             </div>
-                            <button onClick={() => setReportModalOpen(false)} className="rounded-full bg-white/5 p-3 hover:bg-white/10 transition-all"><X size={20} /></button>
-                        </div>
-                        <div className="flex-1 overflow-y-auto px-10 py-8 font-mono text-[15px] leading-8 text-slate-300 custom-scrollbar whitespace-pre-wrap">
-                            {report}
-                        </div>
-                        <div className="border-t border-white/10 px-8 py-5 flex justify-end bg-white/5 gap-3">
-                            <span className="mr-auto text-xs text-slate-500 flex items-center gap-2 font-mono"><Terminal size={12} /> PROOF_OF_SUCCESS: 0xc0ffee...</span>
-                            <button onClick={() => setReportModalOpen(false)} className="rounded-xl bg-blue-600 px-8 py-3 font-bold text-white hover:bg-blue-500 transition-all">CLOSE LEDGER</button>
+                            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+                                {!report && <p className="text-base text-gray-300">Generate a report first to view it here.</p>}
+                                {report && (
+                                    <div className="space-y-1 text-[15px] leading-8 text-gray-100">
+                                        {reportLines.map((line, idx) => (
+                                            <p key={`${idx}-${line}`} className={line.includes(':') ? 'font-semibold text-cyan-100' : ''}>
+                                                {line || '\u00A0'}
+                                            </p>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex items-center justify-between border-t border-white/10 px-5 py-3">
+                                <span className="text-xs text-gray-400">{report ? `${report.length} chars` : 'No report loaded'}</span>
+                                <button onClick={() => setReportModalOpen(false)} className="rounded bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-500">Close</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-
-            <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar { width: 4px; } .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.2); border-radius: 10px; } .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }` }} />
+                )}
+            </div>
         </div>
     );
 }
